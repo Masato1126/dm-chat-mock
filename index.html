@@ -6,77 +6,100 @@
 <title>DMチャットモック</title>
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="DMモック">
 <link rel="apple-touch-icon" href="icon-180.png">
-<meta name="theme-color" content="#0b0b0f">
+<meta name="theme-color" content="#ffffff">
 <style>
   :root{
-    --bg:#0b0b0f; --panel:#15151b; --line:#242430;
-    --bubble-mine:#3d7dff; --bubble-theirs:#26262f;
-    --ink:#f2f2f5; --ink-dim:#8a8a96; --accent:#ff3d7f;
+    --bg:#ffffff;
+    --bubble-mine-start:#5851db;
+    --bubble-mine-end:#e1306c;
+    --bubble-theirs:#efefef;
+    --ink:#262626;
+    --ink-dim:#8e8e8e;
+    --line:#dbdbdb;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{ margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:'Hiragino Sans','Yu Gothic',sans-serif; }
+  html,body{ margin:0; height:100%; background:#fff; font-family:-apple-system, 'Hiragino Sans', 'Yu Gothic', sans-serif; color:var(--ink); }
   button{ font-family:inherit; cursor:pointer; touch-action:manipulation; }
   input{ font-family:inherit; }
 
-  #joinPanel{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
-  .join-card{ width:100%; max-width:360px; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px; }
-  .join-card h1{ font-size:1.05rem; margin:0 0 6px; }
+  #joinPanel{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; background:#fff; }
+  .join-card{ width:100%; max-width:360px; background:#fff; border:1px solid var(--line); border-radius:16px; padding:22px; }
+  .join-card h1{ font-size:1.05rem; margin:0 0 6px; color:var(--ink); }
   .join-card p{ font-size:.78rem; color:var(--ink-dim); margin:0 0 16px; line-height:1.6; }
   .join-card label{ display:block; font-size:.75rem; color:var(--ink-dim); margin:12px 0 5px; }
-  .join-card input{ width:100%; padding:11px; border-radius:9px; border:1px solid var(--line); background:#1c1c24; color:var(--ink); font-size:.95rem; }
-  .join-card button{ width:100%; margin-top:18px; padding:13px; border:0; border-radius:10px; font-weight:700; font-size:.9rem; background:linear-gradient(120deg,#ff3d7f,#a239ff); color:#fff; }
+  .join-card input{ width:100%; padding:11px; border-radius:9px; border:1px solid var(--line); background:#fafafa; color:var(--ink); font-size:.95rem; }
+  .join-card button{
+    width:100%; margin-top:18px; padding:13px; border:0; border-radius:10px; font-weight:700; font-size:.9rem; color:#fff;
+    background:linear-gradient(90deg,#5851db,#833ab4,#c13584,#e1306c,#fd1d1d);
+  }
+  .join-hint{ font-size:.68rem; color:#aaa; margin-top:10px; line-height:1.6; }
 
-  #chatScreen{ display:none; min-height:100vh; flex-direction:column; }
+  #chatScreen{ display:none; min-height:100vh; flex-direction:column; background:#fff; }
   #chatScreen.active{ display:flex; }
 
   .chat-header{
-    position:sticky; top:0; z-index:10; background:rgba(11,11,15,.92); backdrop-filter:blur(8px);
-    border-bottom:1px solid var(--line); padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 12px;
+    position:sticky; top:0; z-index:10; background:#fff; color:var(--ink);
+    border-bottom:1px solid var(--line);
+    padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 10px;
     display:flex; align-items:center; gap:10px;
   }
-  .chat-avatar{ width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#ff3d7f,#a239ff); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.85rem; }
-  .chat-title{ font-size:.92rem; font-weight:700; }
+  .back-arrow{ background:none; border:0; color:var(--ink); font-size:1.5rem; padding:0 4px; }
+  .chat-avatar{
+    width:36px; height:36px; border-radius:50%;
+    background:linear-gradient(135deg,#5851db,#833ab4,#c13584,#e1306c,#fd1d1d);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.85rem; color:#fff;
+  }
+  .chat-title{ font-size:.92rem; font-weight:700; color:var(--ink); }
   .chat-sub{ font-size:.68rem; color:var(--ink-dim); }
-  .chat-header .settings-btn{ margin-left:auto; background:none; border:0; color:var(--ink-dim); font-size:1.1rem; }
+  .conn-badge{ margin-left:auto; font-size:.62rem; color:var(--ink-dim); background:#f5f5f5; padding:4px 9px; border-radius:999px; white-space:nowrap; border:1px solid var(--line); }
+  .conn-badge.ok{ color:#2e9e4f; border-color:#bfe8cb; background:#f0fbf3; }
 
-  .messages{ flex:1; overflow-y:auto; padding:16px 14px; display:flex; flex-direction:column; gap:8px; }
-  .msg-row{ display:flex; }
+  .messages{ flex:1; overflow-y:auto; padding:14px 12px 6px; display:flex; flex-direction:column; gap:4px; background:#fff; }
+
+  .msg-row{ display:flex; align-items:flex-end; gap:6px; margin:2px 0; }
   .msg-row.mine{ justify-content:flex-end; }
   .msg-row.theirs{ justify-content:flex-start; }
+
+  .bubble-wrap{ display:flex; flex-direction:column; max-width:70%; }
+  .msg-row.mine .bubble-wrap{ align-items:flex-end; }
+  .msg-row.theirs .bubble-wrap{ align-items:flex-start; }
+
   .bubble{
-    max-width:72%; padding:10px 13px; border-radius:16px; font-size:.88rem; line-height:1.5; word-break:break-word;
-    position:relative;
+    padding:10px 14px; border-radius:20px; font-size:.9rem; line-height:1.4; word-break:break-word;
   }
-  .msg-row.mine .bubble{ background:var(--bubble-mine); color:#fff; border-bottom-right-radius:4px; }
-  .msg-row.theirs .bubble{ background:var(--bubble-theirs); color:var(--ink); border-bottom-left-radius:4px; }
-  .msg-meta{ font-size:.62rem; color:var(--ink-dim); margin-top:3px; }
-  .msg-row.mine .msg-meta{ text-align:right; }
-  .typing-indicator{ font-size:.72rem; color:var(--ink-dim); padding:0 14px 6px; min-height:18px; }
+  .msg-row.mine .bubble{
+    background:linear-gradient(135deg,var(--bubble-mine-start),var(--bubble-mine-end));
+    color:#fff; border-bottom-right-radius:6px;
+  }
+  .msg-row.theirs .bubble{ background:var(--bubble-theirs); color:var(--ink); border-bottom-left-radius:6px; }
+
+  .msg-time{ font-size:.6rem; color:var(--ink-dim); margin:0 6px; white-space:nowrap; align-self:flex-end; }
+  .theirs-name{ font-size:.64rem; color:var(--ink-dim); margin:0 0 2px 4px; }
+
+  .typing-indicator{ font-size:.72rem; color:var(--ink-dim); padding:2px 16px 8px; min-height:20px; }
 
   .composer{
-    position:sticky; bottom:0; background:var(--bg); border-top:1px solid var(--line);
+    position:sticky; bottom:0; background:#fff; border-top:1px solid var(--line);
     padding:10px 12px calc(env(safe-area-inset-bottom,0px) + 10px); display:flex; gap:8px; align-items:center;
   }
   .composer input{
-    flex:1; padding:11px 14px; border-radius:999px; border:1px solid var(--line); background:#1c1c24; color:var(--ink); font-size:.9rem;
+    flex:1; padding:11px 16px; border-radius:22px; border:1px solid var(--line); background:#fafafa; color:var(--ink); font-size:.9rem;
   }
   .composer button{
-    width:40px; height:40px; border-radius:50%; border:0; background:var(--accent); color:#fff; font-size:1rem; flex-shrink:0;
+    width:38px; height:38px; border-radius:50%; border:0; color:#fff; font-size:1rem; flex-shrink:0;
+    background:linear-gradient(135deg,#5851db,#833ab4,#c13584,#e1306c,#fd1d1d);
   }
-
-  .quick-row{ display:flex; gap:8px; overflow-x:auto; padding:0 12px 10px; }
-  .quick-chip{ flex-shrink:0; background:#1c1c24; border:1px solid var(--line); color:var(--ink); font-size:.76rem; padding:7px 12px; border-radius:999px; white-space:nowrap; }
 </style>
 </head>
 <body>
 
 <div id="joinPanel">
   <div class="join-card">
-    <h1>DMチャットモック</h1>
-    <p>2台の端末で同じルームコードを入れると、実際のSNS DMのようにリアルタイムでやり取りできます。</p>
+    <h1>DMチャットモック(LINE風)</h1>
+    <p>2台の端末で同じルームコードを入れると、実際のトーク画面のようにリアルタイムでやり取りできます。</p>
     <label>ルームコード</label>
     <input id="roomInput" placeholder="例:1234">
     <label>自分の表示名</label>
@@ -84,23 +107,23 @@
     <label>相手の表示名(画面上部に表示、任意)</label>
     <input id="theirNameInput" placeholder="例:Riku">
     <button onclick="joinChat()">チャットを開始</button>
+    <p class="join-hint">※ルームコードと自分の表示名は、必ず半角・全角も含めて2台で完全に一致させてください(例:「1234」と「１２３４」は別物として扱われます)。</p>
   </div>
 </div>
 
 <div id="chatScreen">
   <div class="chat-header">
+    <button class="back-arrow" onclick="leaveChat()">‹</button>
     <div class="chat-avatar" id="headerAvatar">?</div>
     <div>
       <div class="chat-title" id="headerName">相手</div>
-      <div class="chat-sub" id="headerSub">オンライン</div>
+      <div class="chat-sub" id="headerSub">ルーム: -</div>
     </div>
-    <button class="settings-btn" onclick="leaveChat()">← 戻る</button>
+    <div class="conn-badge" id="connBadge">接続確認中…</div>
   </div>
 
   <div class="messages" id="messages"></div>
   <div class="typing-indicator" id="typingIndicator"></div>
-
-  <div class="quick-row" id="quickRow"></div>
 
   <div class="composer">
     <input id="msgInput" placeholder="メッセージを入力…" oninput="notifyTyping()" onkeydown="if(event.key==='Enter') sendMessage()">
@@ -111,7 +134,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
-    getDatabase, ref, push, onChildAdded, set, onValue, remove
+    getDatabase, ref, push, onChildAdded, set, onValue
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
   const firebaseConfig = {
@@ -128,14 +151,9 @@
   const db = getDatabase(app);
 
   let ROOM = "", MY_NAME = "", THEIR_NAME = "相手";
-  let msgUnsub = null, typingUnsub = null;
+  let msgUnsub = null, typingUnsub = null, presenceUnsub = null;
   let typingTimeout = null;
-
-  const quickPhrases = [
-    "ありがとう！","ほんとに会える？","今日暇？","何時なら空いてる？",
-    "場所どこがいい？","楽しみにしてる","写真送って","声聞きたいな",
-    "本当に来てくれるの？","期待していいの？","今から動ける？"
-  ];
+  let receivedAnyFromOther = false;
 
   function joinChat(){
     ROOM = (document.getElementById('roomInput').value || "0000").trim();
@@ -144,40 +162,53 @@
 
     document.getElementById('headerName').textContent = THEIR_NAME;
     document.getElementById('headerAvatar').textContent = THEIR_NAME.charAt(0) || "?";
+    document.getElementById('headerSub').textContent = "アクティブです";
+    document.getElementById('connBadge').textContent = "接続確認中…";
+    document.getElementById('connBadge').classList.remove('ok');
 
     document.getElementById('joinPanel').style.display = 'none';
     document.getElementById('chatScreen').classList.add('active');
 
-    buildQuickRow();
+    receivedAnyFromOther = false;
     listenMessages();
     listenTyping();
+    announcePresence();
   }
 
   function leaveChat(){
     if(msgUnsub) msgUnsub();
     if(typingUnsub) typingUnsub();
+    if(presenceUnsub) presenceUnsub();
     document.getElementById('messages').innerHTML = "";
     document.getElementById('chatScreen').classList.remove('active');
     document.getElementById('joinPanel').style.display = 'flex';
   }
 
-  function buildQuickRow(){
-    const wrap = document.getElementById('quickRow');
-    wrap.innerHTML = "";
-    quickPhrases.forEach(text=>{
-      const chip = document.createElement('button');
-      chip.className = 'quick-chip';
-      chip.textContent = text;
-      chip.onclick = ()=> sendMessage(text);
-      wrap.appendChild(chip);
+  // presence: just to show a connection badge to help debugging
+  function announcePresence(){
+    set(ref(db, "rooms/" + ROOM + "/chatPresence/" + MY_NAME), Date.now());
+    const presRef = ref(db, "rooms/" + ROOM + "/chatPresence");
+    presenceUnsub = onValue(presRef, (snap)=>{
+      const val = snap.val() || {};
+      const others = Object.keys(val).filter(n => n !== MY_NAME);
+      const badge = document.getElementById('connBadge');
+      if(others.length > 0){
+        badge.textContent = "相手も接続中";
+        badge.classList.add('ok');
+      } else {
+        badge.textContent = "相手はまだ未接続";
+        badge.classList.remove('ok');
+      }
     });
   }
 
   function listenMessages(){
     const msgRef = ref(db, "rooms/" + ROOM + "/chat/messages");
+    let lastDateLabel = "";
     msgUnsub = onChildAdded(msgRef, (snap)=>{
       const m = snap.val();
       if(!m) return;
+      if(m.sender !== MY_NAME) receivedAnyFromOther = true;
       renderMessage(m.sender, m.text, m.ts);
     });
   }
@@ -188,11 +219,16 @@
     const row = document.createElement('div');
     row.className = 'msg-row ' + (mine ? 'mine' : 'theirs');
     const time = ts ? new Date(ts).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : "";
+
+    const nameLabel = (!mine) ? `<div class="theirs-name">${escapeHtml(sender)}</div>` : "";
     row.innerHTML = `
-      <div>
+      ${mine ? `<span class="msg-time">${time}</span>` : ""}
+      <div class="bubble-wrap">
+        ${nameLabel}
         <div class="bubble">${escapeHtml(text)}</div>
-        <div class="msg-meta">${mine ? '' : escapeHtml(sender) + ' ・ '}${time}</div>
-      </div>`;
+      </div>
+      ${!mine ? `<span class="msg-time">${time}</span>` : ""}
+    `;
     wrap.appendChild(row);
     wrap.scrollTop = wrap.scrollHeight;
   }
@@ -201,12 +237,12 @@
     return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
-  function sendMessage(presetText){
+  function sendMessage(){
     const input = document.getElementById('msgInput');
-    const text = (presetText !== undefined ? presetText : input.value.trim());
+    const text = input.value.trim();
     if(!text) return;
     push(ref(db, "rooms/" + ROOM + "/chat/messages"), { sender: MY_NAME, text, ts: Date.now() });
-    if(presetText === undefined) input.value = "";
+    input.value = "";
     set(ref(db, "rooms/" + ROOM + "/chat/typing/" + MY_NAME), null);
   }
 
