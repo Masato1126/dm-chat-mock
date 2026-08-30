@@ -13,35 +13,108 @@
 <style>
   :root{
     --bg:#ffffff;
-    --bubble-mine-start:#5851db;
-    --bubble-mine-end:#e1306c;
-    --bubble-theirs:#efefef;
+    --header-bg:#ffffff;
+    --bubble-mine-bg: linear-gradient(135deg,#5851db,#833ab4,#c13584,#e1306c,#fd1d1d);
+    --bubble-mine-text:#ffffff;
+    --bubble-theirs-bg:#efefef;
+    --bubble-theirs-text:#262626;
+    --bubble-radius:20px;
+    --accent-solid:#5851db;
+    --accent-grad: linear-gradient(90deg,#5851db,#833ab4,#c13584,#e1306c,#fd1d1d);
     --ink:#262626;
     --ink-dim:#8e8e8e;
     --line:#dbdbdb;
   }
+
+  /* ---- テーマ: X風 ---- */
+  html.theme-x{
+    --bg:#ffffff;
+    --header-bg:#ffffff;
+    --bubble-mine-bg:#1d9bf0;
+    --bubble-mine-text:#ffffff;
+    --bubble-theirs-bg:#eff3f4;
+    --bubble-theirs-text:#0f1419;
+    --bubble-radius:18px;
+    --accent-solid:#1d9bf0;
+    --accent-grad:#1d9bf0;
+    --ink:#0f1419;
+    --ink-dim:#536471;
+    --line:#e1e8ed;
+  }
+
+  /* ---- テーマ: インスタ風(デフォルト踏襲) ---- */
+  html.theme-instagram{
+    --bg:#ffffff;
+    --header-bg:#ffffff;
+    --bubble-mine-bg: linear-gradient(135deg,#5851db,#833ab4,#c13584,#e1306c,#fd1d1d);
+    --bubble-mine-text:#ffffff;
+    --bubble-theirs-bg:#efefef;
+    --bubble-theirs-text:#262626;
+    --bubble-radius:20px;
+    --accent-solid:#c13584;
+    --accent-grad: linear-gradient(90deg,#5851db,#833ab4,#c13584,#e1306c,#fd1d1d);
+    --ink:#262626;
+    --ink-dim:#8e8e8e;
+    --line:#dbdbdb;
+  }
+
+  /* ---- テーマ: LINE風 ---- */
+  html.theme-line{
+    --bg:#e7ede4;
+    --header-bg:#ffffff;
+    --bubble-mine-bg:#8de055;
+    --bubble-mine-text:#1a1a1a;
+    --bubble-theirs-bg:#ffffff;
+    --bubble-theirs-text:#1a1a1a;
+    --bubble-radius:12px;
+    --accent-solid:#06c755;
+    --accent-grad:#06c755;
+    --ink:#1a1a1a;
+    --ink-dim:#8c8c8c;
+    --line:#d9d9d9;
+  }
+
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{ margin:0; height:100%; background:#fff; font-family:-apple-system, 'Hiragino Sans', 'Yu Gothic', sans-serif; color:var(--ink); }
+  html,body{ margin:0; height:100%; background:var(--bg); font-family:-apple-system, 'Hiragino Sans', 'Yu Gothic', sans-serif; color:var(--ink); }
   button{ font-family:inherit; cursor:pointer; touch-action:manipulation; }
   input{ font-family:inherit; }
 
-  #joinPanel{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; background:#fff; }
-  .join-card{ width:100%; max-width:360px; background:#fff; border:1px solid var(--line); border-radius:16px; padding:22px; }
+  /* ---- テーマ選択画面 ---- */
+  #themePanel{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; background:#fafafa; }
+  .theme-card{ width:100%; max-width:360px; }
+  .theme-card h1{ font-size:1.05rem; margin:0 0 6px; color:#262626; }
+  .theme-card p{ font-size:.78rem; color:#8e8e8e; margin:0 0 20px; line-height:1.6; }
+  .theme-opt{
+    width:100%; display:flex; align-items:center; gap:12px; padding:14px 16px; margin-bottom:12px;
+    border-radius:14px; border:1px solid #e2e2e2; background:#fff; text-align:left;
+  }
+  .theme-opt:active{ background:#f5f5f5; }
+  .theme-dot{ width:34px; height:34px; border-radius:50%; flex-shrink:0; }
+  .theme-dot.x{ background:#1d9bf0; }
+  .theme-dot.instagram{ background:linear-gradient(135deg,#5851db,#833ab4,#c13584,#e1306c,#fd1d1d); }
+  .theme-dot.line{ background:#06c755; }
+  .theme-opt-title{ font-size:.9rem; font-weight:700; color:#262626; }
+  .theme-opt-sub{ font-size:.72rem; color:#8e8e8e; margin-top:2px; }
+
+  #joinPanel{ display:none; min-height:100vh; align-items:center; justify-content:center; padding:24px; background:var(--bg); }
+  #joinPanel.active{ display:flex; }
+  .join-card{ width:100%; max-width:360px; background:var(--header-bg); border:1px solid var(--line); border-radius:16px; padding:22px; }
   .join-card h1{ font-size:1.05rem; margin:0 0 6px; color:var(--ink); }
   .join-card p{ font-size:.78rem; color:var(--ink-dim); margin:0 0 16px; line-height:1.6; }
   .join-card label{ display:block; font-size:.75rem; color:var(--ink-dim); margin:12px 0 5px; }
   .join-card input{ width:100%; padding:11px; border-radius:9px; border:1px solid var(--line); background:#fafafa; color:var(--ink); font-size:.95rem; }
-  .join-card button{
+  .join-card button.primary{
     width:100%; margin-top:18px; padding:13px; border:0; border-radius:10px; font-weight:700; font-size:.9rem; color:#fff;
-    background:linear-gradient(90deg,#5851db,#833ab4,#c13584,#e1306c,#fd1d1d);
+    background:var(--accent-grad);
   }
   .join-hint{ font-size:.68rem; color:#aaa; margin-top:10px; line-height:1.6; }
+  .theme-change-link{ display:block; width:100%; margin-top:14px; padding:10px; border:0; background:none; color:var(--ink-dim); font-size:.75rem; text-align:center; text-decoration:underline; }
 
-  #chatScreen{ display:none; min-height:100vh; flex-direction:column; background:#fff; }
+  #chatScreen{ display:none; min-height:100vh; flex-direction:column; background:var(--bg); }
   #chatScreen.active{ display:flex; }
 
   .chat-header{
-    position:sticky; top:0; z-index:10; background:#fff; color:var(--ink);
+    position:sticky; top:0; z-index:10; background:var(--header-bg); color:var(--ink);
     border-bottom:1px solid var(--line);
     padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 10px;
     display:flex; align-items:center; gap:10px;
@@ -49,15 +122,18 @@
   .back-arrow{ background:none; border:0; color:var(--ink); font-size:1.5rem; padding:0 4px; }
   .chat-avatar{
     width:36px; height:36px; border-radius:50%;
-    background:linear-gradient(135deg,#5851db,#833ab4,#c13584,#e1306c,#fd1d1d);
+    background:var(--accent-grad);
     display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.85rem; color:#fff;
   }
   .chat-title{ font-size:.92rem; font-weight:700; color:var(--ink); }
   .chat-sub{ font-size:.68rem; color:var(--ink-dim); }
-  .conn-badge{ margin-left:auto; font-size:.62rem; color:var(--ink-dim); background:#f5f5f5; padding:4px 9px; border-radius:999px; white-space:nowrap; border:1px solid var(--line); }
+  .header-actions{ margin-left:auto; display:flex; align-items:center; gap:6px; }
+  .conn-badge{ font-size:.62rem; color:var(--ink-dim); background:#f5f5f5; padding:4px 9px; border-radius:999px; white-space:nowrap; border:1px solid var(--line); }
   .conn-badge.ok{ color:#2e9e4f; border-color:#bfe8cb; background:#f0fbf3; }
+  .clear-btn{ background:none; border:1px solid var(--line); color:var(--ink-dim); font-size:.85rem; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .clear-btn:active{ background:#f5f5f5; }
 
-  .messages{ flex:1; overflow-y:auto; padding:14px 12px 6px; display:flex; flex-direction:column; gap:4px; background:#fff; }
+  .messages{ flex:1; overflow-y:auto; padding:14px 12px 6px; display:flex; flex-direction:column; gap:4px; background:var(--bg); }
 
   .msg-row{ display:flex; align-items:flex-end; gap:6px; margin:2px 0; }
   .msg-row.mine{ justify-content:flex-end; }
@@ -68,13 +144,13 @@
   .msg-row.theirs .bubble-wrap{ align-items:flex-start; }
 
   .bubble{
-    padding:10px 14px; border-radius:20px; font-size:.9rem; line-height:1.4; word-break:break-word;
+    padding:10px 14px; border-radius:var(--bubble-radius); font-size:.9rem; line-height:1.4; word-break:break-word;
   }
   .msg-row.mine .bubble{
-    background:linear-gradient(135deg,var(--bubble-mine-start),var(--bubble-mine-end));
-    color:#fff; border-bottom-right-radius:6px;
+    background:var(--bubble-mine-bg);
+    color:var(--bubble-mine-text); border-bottom-right-radius:6px;
   }
-  .msg-row.theirs .bubble{ background:var(--bubble-theirs); color:var(--ink); border-bottom-left-radius:6px; }
+  .msg-row.theirs .bubble{ background:var(--bubble-theirs-bg); color:var(--bubble-theirs-text); border-bottom-left-radius:6px; }
 
   .msg-time{ font-size:.6rem; color:var(--ink-dim); margin:0 6px; white-space:nowrap; align-self:flex-end; }
   .theirs-name{ font-size:.64rem; color:var(--ink-dim); margin:0 0 2px 4px; }
@@ -82,7 +158,7 @@
   .typing-indicator{ font-size:.72rem; color:var(--ink-dim); padding:2px 16px 8px; min-height:20px; }
 
   .composer{
-    position:sticky; bottom:0; background:#fff; border-top:1px solid var(--line);
+    position:sticky; bottom:0; background:var(--bg); border-top:1px solid var(--line);
     padding:10px 12px calc(env(safe-area-inset-bottom,0px) + 10px); display:flex; gap:8px; align-items:center;
   }
   .composer input{
@@ -90,15 +166,43 @@
   }
   .composer button{
     width:38px; height:38px; border-radius:50%; border:0; color:#fff; font-size:1rem; flex-shrink:0;
-    background:linear-gradient(135deg,#5851db,#833ab4,#c13584,#e1306c,#fd1d1d);
+    background:var(--accent-grad);
   }
 </style>
 </head>
 <body>
 
+<div id="themePanel">
+  <div class="theme-card">
+    <h1>見た目を選んでください</h1>
+    <p>あとから「テーマを変更」でいつでも切り替えられます。</p>
+    <button class="theme-opt" onclick="selectTheme('x')">
+      <div class="theme-dot x"></div>
+      <div>
+        <div class="theme-opt-title">X風</div>
+        <div class="theme-opt-sub">青バブル・シンプルな配色</div>
+      </div>
+    </button>
+    <button class="theme-opt" onclick="selectTheme('instagram')">
+      <div class="theme-dot instagram"></div>
+      <div>
+        <div class="theme-opt-title">インスタ風</div>
+        <div class="theme-opt-sub">グラデーションバブル</div>
+      </div>
+    </button>
+    <button class="theme-opt" onclick="selectTheme('line')">
+      <div class="theme-dot line"></div>
+      <div>
+        <div class="theme-opt-title">LINE風</div>
+        <div class="theme-opt-sub">緑バブル・白背景</div>
+      </div>
+    </button>
+  </div>
+</div>
+
 <div id="joinPanel">
   <div class="join-card">
-    <h1>DMチャットモック(LINE風)</h1>
+    <h1>DMチャットモック</h1>
     <p>2台の端末で同じルームコードを入れると、実際のトーク画面のようにリアルタイムでやり取りできます。</p>
     <label>ルームコード</label>
     <input id="roomInput" placeholder="例:1234">
@@ -106,8 +210,9 @@
     <input id="myNameInput" placeholder="例:みお">
     <label>相手の表示名(画面上部に表示、任意)</label>
     <input id="theirNameInput" placeholder="例:Riku">
-    <button onclick="joinChat()">チャットを開始</button>
+    <button class="primary" onclick="joinChat()">チャットを開始</button>
     <p class="join-hint">※ルームコードと自分の表示名は、必ず半角・全角も含めて2台で完全に一致させてください(例:「1234」と「１２３４」は別物として扱われます)。</p>
+    <button class="theme-change-link" onclick="backToThemeSelect()">テーマを変更</button>
   </div>
 </div>
 
@@ -119,7 +224,10 @@
       <div class="chat-title" id="headerName">相手</div>
       <div class="chat-sub" id="headerSub">ルーム: -</div>
     </div>
-    <div class="conn-badge" id="connBadge">接続確認中…</div>
+    <div class="header-actions">
+      <div class="conn-badge" id="connBadge">接続確認中…</div>
+      <button class="clear-btn" id="clearBtn" onclick="clearHistory()" title="トーク履歴をクリア">🗑</button>
+    </div>
   </div>
 
   <div class="messages" id="messages"></div>
@@ -134,7 +242,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
-    getDatabase, ref, push, onChildAdded, set, onValue
+    getDatabase, ref, push, onChildAdded, set, onValue, remove
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
   const firebaseConfig = {
@@ -155,6 +263,32 @@
   let typingTimeout = null;
   let receivedAnyFromOther = false;
 
+  const THEME_KEY = 'dm-mock-theme';
+
+  function selectTheme(theme){
+    document.documentElement.classList.remove('theme-x', 'theme-instagram', 'theme-line');
+    document.documentElement.classList.add('theme-' + theme);
+    document.getElementById('themePanel').style.display = 'none';
+    document.getElementById('joinPanel').classList.add('active');
+    try{ localStorage.setItem(THEME_KEY, theme); }catch(e){}
+  }
+
+  function backToThemeSelect(){
+    document.getElementById('joinPanel').classList.remove('active');
+    document.getElementById('themePanel').style.display = 'flex';
+  }
+
+  // 前回選んだテーマがあれば復元し、テーマ選択はスキップして入室画面へ
+  (function initTheme(){
+    let saved = null;
+    try{ saved = localStorage.getItem(THEME_KEY); }catch(e){}
+    if(saved){
+      document.documentElement.classList.add('theme-' + saved);
+      document.getElementById('themePanel').style.display = 'none';
+      document.getElementById('joinPanel').classList.add('active');
+    }
+  })();
+
   function joinChat(){
     ROOM = (document.getElementById('roomInput').value || "0000").trim();
     MY_NAME = (document.getElementById('myNameInput').value || "自分").trim();
@@ -162,11 +296,11 @@
 
     document.getElementById('headerName').textContent = THEIR_NAME;
     document.getElementById('headerAvatar').textContent = THEIR_NAME.charAt(0) || "?";
-    document.getElementById('headerSub').textContent = "アクティブです";
+    document.getElementById('headerSub').textContent = "ルーム: " + ROOM;
     document.getElementById('connBadge').textContent = "接続確認中…";
     document.getElementById('connBadge').classList.remove('ok');
 
-    document.getElementById('joinPanel').style.display = 'none';
+    document.getElementById('joinPanel').classList.remove('active');
     document.getElementById('chatScreen').classList.add('active');
 
     receivedAnyFromOther = false;
@@ -181,7 +315,14 @@
     if(presenceUnsub) presenceUnsub();
     document.getElementById('messages').innerHTML = "";
     document.getElementById('chatScreen').classList.remove('active');
-    document.getElementById('joinPanel').style.display = 'flex';
+    document.getElementById('joinPanel').classList.add('active');
+  }
+
+  // トーク履歴をクリア(Firebase側の過去メッセージも削除。2台とも画面から消えます)
+  function clearHistory(){
+    if(!confirm("このルームのトーク履歴をすべて削除します。よろしいですか?\n(相手の画面からも消えます)")) return;
+    remove(ref(db, "rooms/" + ROOM + "/chat/messages"));
+    document.getElementById('messages').innerHTML = "";
   }
 
   // presence: just to show a connection badge to help debugging
@@ -204,7 +345,6 @@
 
   function listenMessages(){
     const msgRef = ref(db, "rooms/" + ROOM + "/chat/messages");
-    let lastDateLabel = "";
     msgUnsub = onChildAdded(msgRef, (snap)=>{
       const m = snap.val();
       if(!m) return;
@@ -263,8 +403,11 @@
     });
   }
 
+  window.selectTheme = selectTheme;
+  window.backToThemeSelect = backToThemeSelect;
   window.joinChat = joinChat;
   window.leaveChat = leaveChat;
+  window.clearHistory = clearHistory;
   window.sendMessage = sendMessage;
   window.notifyTyping = notifyTyping;
 </script>
