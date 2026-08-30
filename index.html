@@ -41,6 +41,19 @@
     --ink-dim:#536471;
     --line:#e1e8ed;
   }
+  html.theme-x.dark{
+    --bg:#000000;
+    --header-bg:#000000;
+    --bubble-mine-bg:#1d9bf0;
+    --bubble-mine-text:#ffffff;
+    --bubble-theirs-bg:#2f3336;
+    --bubble-theirs-text:#e7e9ea;
+    --accent-solid:#1d9bf0;
+    --accent-grad:#1d9bf0;
+    --ink:#e7e9ea;
+    --ink-dim:#71767b;
+    --line:#2f3336;
+  }
 
   /* ---- テーマ: インスタ風(デフォルト踏襲) ---- */
   html.theme-instagram{
@@ -57,6 +70,19 @@
     --ink-dim:#8e8e8e;
     --line:#dbdbdb;
   }
+  html.theme-instagram.dark{
+    --bg:#000000;
+    --header-bg:#000000;
+    --bubble-mine-bg: linear-gradient(135deg,#5851db,#833ab4,#c13584,#e1306c,#fd1d1d);
+    --bubble-mine-text:#ffffff;
+    --bubble-theirs-bg:#262626;
+    --bubble-theirs-text:#f5f5f5;
+    --accent-solid:#c13584;
+    --accent-grad: linear-gradient(90deg,#5851db,#833ab4,#c13584,#e1306c,#fd1d1d);
+    --ink:#f5f5f5;
+    --ink-dim:#a8a8a8;
+    --line:#262626;
+  }
 
   /* ---- テーマ: LINE風 ---- */
   html.theme-line{
@@ -72,6 +98,19 @@
     --ink:#1a1a1a;
     --ink-dim:#8c8c8c;
     --line:#d9d9d9;
+  }
+  html.theme-line.dark{
+    --bg:#181f1a;
+    --header-bg:#1f2822;
+    --bubble-mine-bg:#0bc75c;
+    --bubble-mine-text:#0c1f11;
+    --bubble-theirs-bg:#293029;
+    --bubble-theirs-text:#f0f0f0;
+    --accent-solid:#0bc75c;
+    --accent-grad:#0bc75c;
+    --ink:#f0f0f0;
+    --ink-dim:#8c968c;
+    --line:#333c34;
   }
 
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
@@ -95,6 +134,14 @@
   .theme-dot.line{ background:#06c755; }
   .theme-opt-title{ font-size:.9rem; font-weight:700; color:#262626; }
   .theme-opt-sub{ font-size:.72rem; color:#8e8e8e; margin-top:2px; }
+
+  .dark-toggle-row{ display:flex; align-items:center; justify-content:space-between; padding:12px 16px; margin-bottom:14px; background:#fff; border:1px solid #e2e2e2; border-radius:14px; font-size:.85rem; font-weight:700; color:#262626; }
+  .switch{ position:relative; display:inline-block; width:44px; height:26px; flex-shrink:0; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .switch .slider{ position:absolute; cursor:pointer; inset:0; background:#d9d9d9; border-radius:999px; transition:.2s; }
+  .switch .slider::before{ content:""; position:absolute; width:20px; height:20px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s; }
+  .switch input:checked + .slider{ background:#262626; }
+  .switch input:checked + .slider::before{ transform:translateX(18px); }
 
   #joinPanel{ display:none; min-height:100vh; align-items:center; justify-content:center; padding:24px; background:var(--bg); }
   #joinPanel.active{ display:flex; }
@@ -129,9 +176,24 @@
   }
   .chat-title{ font-size:.92rem; font-weight:700; color:var(--ink); }
   .chat-sub{ font-size:.68rem; color:var(--ink-dim); }
-  .header-actions{ margin-left:auto; display:flex; align-items:center; gap:6px; }
-  .conn-badge{ font-size:.62rem; color:var(--ink-dim); background:#f5f5f5; padding:4px 9px; border-radius:999px; white-space:nowrap; border:1px solid var(--line); }
-  .conn-badge.ok{ color:#2e9e4f; border-color:#bfe8cb; background:#f0fbf3; }
+  .header-actions{ margin-left:auto; display:flex; align-items:center; gap:2px; }
+
+  /* 装飾アイコン(押しても機能はしません) */
+  .ig-icon, .line-icon{ display:none; }
+  html.theme-instagram .ig-icon{ display:inline-flex; }
+  html.theme-line .line-icon{ display:inline-flex; }
+
+  .hdr-icon-btn{
+    display:none; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:50%; border:0; background:none; color:var(--ink); flex-shrink:0;
+  }
+  .hdr-icon-btn:active{ background:var(--bubble-theirs-bg); }
+
+  .composer .composer-icon-btn{
+    display:none; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:50%; border:0; background:none; color:var(--ink-dim); flex-shrink:0;
+  }
+  .composer .composer-icon-btn:active{ background:var(--bubble-theirs-bg); }
 
   .messages{ flex:1; overflow-y:auto; padding:14px 12px 6px; display:flex; flex-direction:column; gap:4px; background:var(--bg); }
 
@@ -176,6 +238,13 @@
   <div class="theme-card">
     <h1>見た目を選んでください</h1>
     <p>あとから「テーマを変更」でいつでも切り替えられます。</p>
+    <div class="dark-toggle-row">
+      <span>ダークモードで使う</span>
+      <label class="switch">
+        <input type="checkbox" id="darkToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
     <button class="theme-opt" onclick="selectTheme('x')">
       <div class="theme-dot x"></div>
       <div>
@@ -229,7 +298,15 @@
       <div class="chat-sub" id="headerSub">ルーム: -</div>
     </div>
     <div class="header-actions">
-      <div class="conn-badge" id="connBadge">接続確認中…</div>
+      <button class="hdr-icon-btn ig-icon line-icon" type="button" title="通話">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      </button>
+      <button class="hdr-icon-btn ig-icon line-icon" type="button" title="ビデオ通話">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      </button>
+      <button class="hdr-icon-btn line-icon" type="button" title="メニュー">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
     </div>
   </div>
 
@@ -237,7 +314,19 @@
   <div class="typing-indicator" id="typingIndicator"></div>
 
   <div class="composer">
+    <button class="composer-icon-btn line-icon" type="button" title="追加">
+      <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+    <button class="composer-icon-btn ig-icon" type="button" title="カメラ">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    </button>
     <input id="msgInput" placeholder="メッセージを入力…" oninput="notifyTyping()" onkeydown="if(event.key==='Enter') sendMessage()">
+    <button class="composer-icon-btn ig-icon" type="button" title="ギャラリー">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    </button>
+    <button class="composer-icon-btn line-icon" type="button" title="スタンプ">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+    </button>
     <button onclick="sendMessage()">➤</button>
   </div>
 </div>
@@ -262,31 +351,43 @@
   const db = getDatabase(app);
 
   let ROOM = "", MY_NAME = "", THEIR_NAME = "相手";
-  let msgUnsub = null, typingUnsub = null, presenceUnsub = null;
+  let msgUnsub = null, typingUnsub = null;
   let typingTimeout = null;
   let receivedAnyFromOther = false;
 
   const THEME_KEY = 'dm-mock-theme';
+  const DARK_KEY = 'dm-mock-dark';
 
   function selectTheme(theme){
-    document.documentElement.classList.remove('theme-x', 'theme-instagram', 'theme-line');
+    const isDark = document.getElementById('darkToggle').checked;
+    document.documentElement.classList.remove('theme-x', 'theme-instagram', 'theme-line', 'dark');
     document.documentElement.classList.add('theme-' + theme);
+    if(isDark) document.documentElement.classList.add('dark');
     document.getElementById('themePanel').style.display = 'none';
     document.getElementById('joinPanel').classList.add('active');
-    try{ localStorage.setItem(THEME_KEY, theme); }catch(e){}
+    try{
+      localStorage.setItem(THEME_KEY, theme);
+      localStorage.setItem(DARK_KEY, isDark ? '1' : '0');
+    }catch(e){}
   }
 
   function backToThemeSelect(){
     document.getElementById('joinPanel').classList.remove('active');
     document.getElementById('themePanel').style.display = 'flex';
+    document.getElementById('darkToggle').checked = document.documentElement.classList.contains('dark');
   }
 
   // 前回選んだテーマがあれば復元し、テーマ選択はスキップして入室画面へ
   (function initTheme(){
-    let saved = null;
-    try{ saved = localStorage.getItem(THEME_KEY); }catch(e){}
+    let saved = null, savedDark = false;
+    try{
+      saved = localStorage.getItem(THEME_KEY);
+      savedDark = localStorage.getItem(DARK_KEY) === '1';
+    }catch(e){}
     if(saved){
       document.documentElement.classList.add('theme-' + saved);
+      if(savedDark) document.documentElement.classList.add('dark');
+      document.getElementById('darkToggle').checked = savedDark;
       document.getElementById('themePanel').style.display = 'none';
       document.getElementById('joinPanel').classList.add('active');
     }
@@ -301,8 +402,6 @@
     document.getElementById('headerName').textContent = THEIR_NAME;
     document.getElementById('headerAvatar').textContent = THEIR_NAME.charAt(0) || "?";
     document.getElementById('headerSub').textContent = "ルーム: " + ROOM;
-    document.getElementById('connBadge').textContent = "接続確認中…";
-    document.getElementById('connBadge').classList.remove('ok');
 
     document.getElementById('joinPanel').classList.remove('active');
     document.getElementById('chatScreen').classList.add('active');
@@ -312,7 +411,6 @@
     const startListening = () => {
       listenMessages();
       listenTyping();
-      announcePresence();
     };
 
     if(shouldClear){
@@ -325,28 +423,9 @@
   function leaveChat(){
     if(msgUnsub) msgUnsub();
     if(typingUnsub) typingUnsub();
-    if(presenceUnsub) presenceUnsub();
     document.getElementById('messages').innerHTML = "";
     document.getElementById('chatScreen').classList.remove('active');
     document.getElementById('joinPanel').classList.add('active');
-  }
-
-  // presence: just to show a connection badge to help debugging
-  function announcePresence(){
-    set(ref(db, "rooms/" + ROOM + "/chatPresence/" + MY_NAME), Date.now());
-    const presRef = ref(db, "rooms/" + ROOM + "/chatPresence");
-    presenceUnsub = onValue(presRef, (snap)=>{
-      const val = snap.val() || {};
-      const others = Object.keys(val).filter(n => n !== MY_NAME);
-      const badge = document.getElementById('connBadge');
-      if(others.length > 0){
-        badge.textContent = "相手も接続中";
-        badge.classList.add('ok');
-      } else {
-        badge.textContent = "相手はまだ未接続";
-        badge.classList.remove('ok');
-      }
-    });
   }
 
   function listenMessages(){
