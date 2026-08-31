@@ -114,12 +114,12 @@
   }
 
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{ margin:0; height:100%; background:var(--bg); font-family:-apple-system, 'Hiragino Sans', 'Yu Gothic', sans-serif; color:var(--ink); }
+  html,body{ margin:0; height:100%; overflow:hidden; background:var(--bg); font-family:-apple-system, 'Hiragino Sans', 'Yu Gothic', sans-serif; color:var(--ink); }
   button{ font-family:inherit; cursor:pointer; touch-action:manipulation; }
   input{ font-family:inherit; }
 
   /* ---- テーマ選択画面 ---- */
-  #themePanel{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; background:#fafafa; }
+  #themePanel{ height:100%; overflow-y:auto; display:flex; align-items:center; justify-content:center; padding:24px; background:#fafafa; }
   .theme-card{ width:100%; max-width:360px; }
   .theme-card h1{ font-size:1.05rem; margin:0 0 6px; color:#262626; }
   .theme-card p{ font-size:.78rem; color:#8e8e8e; margin:0 0 20px; line-height:1.6; }
@@ -143,7 +143,7 @@
   .switch input:checked + .slider{ background:#262626; }
   .switch input:checked + .slider::before{ transform:translateX(18px); }
 
-  #joinPanel{ display:none; min-height:100vh; align-items:center; justify-content:center; padding:24px; background:var(--bg); }
+  #joinPanel{ display:none; height:100%; overflow-y:auto; align-items:center; justify-content:center; padding:24px; background:var(--bg); }
   #joinPanel.active{ display:flex; }
   .join-card{ width:100%; max-width:360px; background:var(--header-bg); border:1px solid var(--line); border-radius:16px; padding:22px; }
   .join-card h1{ font-size:1.05rem; margin:0 0 6px; color:var(--ink); }
@@ -159,14 +159,18 @@
   .clear-check input{ width:15px; height:15px; margin:0; accent-color:var(--accent-solid); }
   .theme-change-link{ display:block; width:100%; margin-top:14px; padding:10px; border:0; background:none; color:var(--ink-dim); font-size:.75rem; text-align:center; text-decoration:underline; }
 
-  #chatScreen{ display:none; min-height:100vh; flex-direction:column; background:var(--bg); }
+  #chatScreen{
+    display:none; flex-direction:column; background:var(--bg);
+    height:100%; overflow:hidden;
+  }
   #chatScreen.active{ display:flex; }
 
   .chat-header{
-    position:sticky; top:0; z-index:10; background:var(--header-bg); color:var(--ink);
+    position:relative; z-index:10; background:var(--header-bg); color:var(--ink);
     border-bottom:1px solid var(--line);
     padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 10px;
     display:flex; align-items:center; gap:10px;
+    flex-shrink:0;
   }
   .back-arrow{ background:none; border:0; color:var(--ink); font-size:1.5rem; padding:0 4px; }
   .chat-avatar{
@@ -195,7 +199,7 @@
   }
   .composer .composer-icon-btn:active{ background:var(--bubble-theirs-bg); }
 
-  .messages{ flex:1; overflow-y:auto; padding:14px 12px 6px; display:flex; flex-direction:column; gap:4px; background:var(--bg); }
+  .messages{ flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:14px 12px 6px; display:flex; flex-direction:column; gap:4px; background:var(--bg); }
 
   .msg-row{ display:flex; align-items:flex-end; gap:6px; margin:2px 0; }
   .msg-row.mine{ justify-content:flex-end; }
@@ -220,11 +224,11 @@
   .typing-indicator{ font-size:.72rem; color:var(--ink-dim); padding:2px 16px 8px; min-height:20px; }
 
   .composer{
-    position:sticky; bottom:0; background:var(--bg); border-top:1px solid var(--line);
+    position:relative; flex-shrink:0; background:var(--bg); border-top:1px solid var(--line);
     padding:10px 12px calc(env(safe-area-inset-bottom,0px) + 10px); display:flex; gap:8px; align-items:center;
   }
   .composer input{
-    flex:1; padding:11px 16px; border-radius:22px; border:1px solid var(--line); background:#fafafa; color:var(--ink); font-size:.9rem;
+    flex:1; min-width:0; padding:11px 16px; border-radius:22px; border:1px solid var(--line); background:#fafafa; color:var(--ink); font-size:.9rem;
   }
   .composer button{
     width:38px; height:38px; border-radius:50%; border:0; color:#fff; font-size:1rem; flex-shrink:0;
